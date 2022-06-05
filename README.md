@@ -11,14 +11,15 @@ This applet is a Java Card implementation of the [FIDO Alliance U2F standard](ht
 
 # Creating Your Own U2F Token using provided CAP File
 
-## first flash the .cap file using GlobalPlatformPro
+ 1. First flash the .cap with GlobalPlatformPro and installk parameters
+ 2. Install the attestation certificate
 
 The following install parameters are expected :
 
  - 1 byte flag : provide 01 to pass the current Fido NFC interoperability tests, or 00
  - 2 bytes length (big endian encoded) : length of the attestation certificate to load, supposed to be using a private key on the P-256 curve
  - 32 bytes : private (EC) key of the attestation certificate
- - 32 bytes : master key (AES-256)
+ - 32 bytes : master key (AES-256) <- replace this with your own secret key!!!
 
 Example parameters with 
  - flag set to `01`, 
@@ -28,11 +29,18 @@ Example parameters with
 
 `java -jar gp.jar --reinstall ..\cap\u2f.cap -params 010140f3fccc0d00d8031954f90864d43c247f4bf5f0665c6b50cc17749a27d1cf766400112233445566778899AABBCCDDEEFF000102030405060708090A0B0C0D0E0F`
 
+The command is included in `install.bat`
+
+Next install the attestation certificate using one `SELECT`and multiple `UPLOAD` apdu's. Simply
+ - install `python3` and `pyscard`, e.g. via `pip`
+ - run `python3 tools/install_attestation.py`. Each APDU should return `0x90 0x00`
+
 # Purpose of this Fork
 
-# Building 
+1. What if I lose my token?
+2. Side Channel Attacks
 
-# Installing 
+# Building 
 
 # Testing
 
