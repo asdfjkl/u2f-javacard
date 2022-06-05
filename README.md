@@ -51,6 +51,9 @@ As far as I know, most U2F tokens however use on-card key generation. This apple
 
 2. Side Channel Attacks
 
+There are different ways of implementing a U2F token. Let's call them the good, the bad, and the ugly. First recall how a U2F token works:
+
+
 
 
 3. The attestation key & certificate
