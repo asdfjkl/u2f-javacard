@@ -39,6 +39,7 @@ Next install the attestation certificate using one `SELECT`and multiple `UPLOAD`
 
 1. What if I lose my token?
 2. Side Channel Attacks
+3. The attestation key & certificate
 
 # Building 
 
