@@ -11,7 +11,7 @@ This applet is a Java Card implementation of the [FIDO Alliance U2F standard](ht
 
 # Creating Your Own U2F Token using provided CAP File
 
- 1. First flash the .cap with GlobalPlatformPro and installk parameters
+ 1. First flash the .cap with GlobalPlatformPro and install parameters
  2. Install the attestation certificate
 
 The following install parameters are expected :
@@ -38,7 +38,21 @@ Next install the attestation certificate using one `SELECT`and multiple `UPLOAD`
 # Purpose of this Fork
 
 1. What if I lose my token?
+
+This is a frequently asked question. If you have 2-factor authentication activated for an account, and you lose your second factor, you are probably in trouble.
+
+You could register a backup token 'just in case'. But you rarely use that one, so it's likely also hidden somewhere...
+
+There is some account recovery process for the website in question. This could be something really difficult (e.g. tied to your phone number, but what if your phone number changes) up to some very easy questions (What was the city you grew up in?) which an attacker could overcome by social engineering. Also, very often these questions are ambigious (what if you grew up in two different cities), what was the spelling you used for these cities when registering the account, etc.
+
+Another approach is to generate a secret `master key` off-card, and flash it on the token. You can then write that master-key down on a piece of paper and store it somewhere safely, or use some other form of electronic cold-storage. You could also generate the master-key from the hash of secret sentence or a bunch of key-words, as done by some bit-coin wallets.
+
+As far as I know, most U2F tokens however use on-card key generation. This applet is different, here you must generate a 256 bit AES key off-card, and supply it to the card during installation. This way you can generate infinitely many tokens. In case your token gets lost or stolen, you can generate a second token with the key, and, in case of a stolen token, transfer all your accounts safely to a token with a new master key.
+
 2. Side Channel Attacks
+
+
+
 3. The attestation key & certificate
 
 # Building 
