@@ -2,6 +2,7 @@
  *******************************************************************************
  *   FIDO U2F Authenticator
  *   (c) 2015 Ledger
+ *   (c) 2022 Dominik Klein
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +18,7 @@
  *******************************************************************************
  */
 
-package com.ledger.u2f;
+package de.asdfjkl.u2f.javacard;
 
 import javacard.framework.*;
 import javacard.security.CryptoException;
@@ -40,6 +41,7 @@ public class U2FApplet extends Applet implements ExtendedLength {
     private ECPrivateKey attestationPrivateKey;
     private ECPrivateKey localPrivateKey;
     private boolean localPrivateTransient;
+    private boolean localPrivateTransient1;
     private boolean counterOverflowed;
     private Signature attestationSignature;
     private Signature localSignature;
@@ -53,8 +55,8 @@ public class U2FApplet extends Applet implements ExtendedLength {
     private static final byte FIDO_INS_VERSION = (byte) 0x03;
     private static final byte ISO_INS_GET_DATA = (byte) 0xC0;
 
-    private static final byte PROPRIETARY_CLA = (byte) 0xF0;
-    private static final byte FIDO_ADM_SET_ATTESTATION_CERT = (byte) 0x01;
+    private static final byte PROPRIETARY_CLA = (byte) 0x80;
+    private static final byte FIDO_ADM_SET_ATTESTATION_CERT = (byte) 0x09;
 
     private static final byte SCRATCH_TRANSPORT_STATE = (byte) 0;
     private static final byte SCRATCH_CURRENT_OFFSET = (byte) 1;
@@ -107,12 +109,23 @@ public class U2FApplet extends Applet implements ExtendedLength {
      * @param parametersLength always 35
      */
     public U2FApplet(byte[] parameters, short parametersOffset, byte parametersLength) {
-        if (parametersLength != 35) {
+        if (parametersLength != (35+32)) {
             ISOException.throwIt(ISO7816.SW_WRONG_DATA);
         }
         counter = new byte[4];
         scratchPersistent = JCSystem.makeTransientByteArray((short) 1, JCSystem.CLEAR_ON_RESET);
         scratch = JCSystem.makeTransientByteArray((short) (SCRATCH_PAD + SCRATCH_PAD_SIZE), JCSystem.CLEAR_ON_DESELECT);
+        
+        localPrivateKey = (ECPrivateKey) KeyBuilder.buildKey(KeyBuilder.TYPE_EC_FP_PRIVATE, KeyBuilder.LENGTH_EC_FP_256, false);
+        Secp256r1.setCommonCurveParameters(localPrivateKey);
+        
+        //localPrivateKey = (ECPrivateKey) KeyBuilder.buildKey(KeyBuilder.TYPE_EC_FP_PRIVATE_TRANSIENT_DESELECT, KeyBuilder.LENGTH_EC_FP_256, false);
+        //localPrivateTransient = true;
+        
+        //localPrivateKey = (ECPrivateKey) KeyBuilder.buildKey(KeyBuilder.TYPE_EC_FP_PRIVATE_TRANSIENT_RESET, KeyBuilder.LENGTH_EC_FP_256, false);
+        //localPrivateTransient = true;
+        
+        /*
         try {
             // ok, let's save RAM
             localPrivateKey = (ECPrivateKey) KeyBuilder.buildKey(KeyBuilder.TYPE_EC_FP_PRIVATE_TRANSIENT_DESELECT, KeyBuilder.LENGTH_EC_FP_256, false);
@@ -127,7 +140,7 @@ public class U2FApplet extends Applet implements ExtendedLength {
                 localPrivateKey = (ECPrivateKey) KeyBuilder.buildKey(KeyBuilder.TYPE_EC_FP_PRIVATE, KeyBuilder.LENGTH_EC_FP_256, false);
                 Secp256r1.setCommonCurveParameters(localPrivateKey);
             }
-        }
+        }*/
         attestationSignature = Signature.getInstance(Signature.ALG_ECDSA_SHA_256, false);
         localSignature = Signature.getInstance(Signature.ALG_ECDSA_SHA_256, false);
         flags = parameters[parametersOffset];
@@ -136,7 +149,7 @@ public class U2FApplet extends Applet implements ExtendedLength {
         Secp256r1.setCommonCurveParameters(attestationPrivateKey);
         attestationPrivateKey.setS(parameters, (short) (parametersOffset + 3), (short) 32);
         attestationSignature.init(attestationPrivateKey, Signature.MODE_SIGN);
-        fidoImpl = new FIDOStandalone();
+        fidoImpl = new FIDOStandalone(parameters, (short) (parametersOffset + 35));
     }
 
     /**
@@ -454,4 +467,3 @@ public class U2FApplet extends Applet implements ExtendedLength {
         new U2FApplet(bArray, (short) (offset + 1), bArray[offset]).register(bArray, (short) (bOffset + 1), bArray[bOffset]);
     }
 }
-

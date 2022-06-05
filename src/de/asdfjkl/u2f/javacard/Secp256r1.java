@@ -2,6 +2,7 @@
  *******************************************************************************
  *   FIDO U2F Authenticator
  *   (c) 2015 Ledger
+ *   (c) 2022 Dominik Klein
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +18,7 @@
  *******************************************************************************
  */
 
-package com.ledger.u2f;
+package de.asdfjkl.u2f.javacard;
 
 import javacard.security.ECKey;
 
@@ -87,5 +88,9 @@ public class Secp256r1 {
             return false;
         }
 
+    }
+    
+    protected static void setCurveParamA(ECKey key) {
+    	key.setA(SECP256R1_A, (short) 0, (short) SECP256R1_A.length);
     }
 }
