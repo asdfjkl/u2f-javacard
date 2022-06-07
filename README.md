@@ -19,7 +19,7 @@ The following install parameters are expected :
  - 1 byte flag : provide 01 to pass the current Fido NFC interoperability tests, or 00
  - 2 bytes length (big endian encoded) : length of the attestation certificate to load, supposed to be using a private key on the P-256 curve
  - 32 bytes : private (EC) key of the attestation certificate
- - 32 bytes : master key (AES-256) <- replace this with your own secret key!!!
+ - 32 bytes : master key (AES-256) <- **replace this with your own secret key!!!**
 
 Example parameters with 
  - flag set to `01`, 
@@ -104,7 +104,7 @@ However instead of installing your own attestation key, I highly recommend to ju
 - adjust the path' in build.xml
 - right click on build.xml and Run As -> 1 Ant Build 
 
-The source code should now be compiled to a `.cap`
+The source code should now be compiled into a `.cap`
 
 # Testing
 
