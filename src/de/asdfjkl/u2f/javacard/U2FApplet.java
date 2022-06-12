@@ -360,6 +360,15 @@ public class U2FApplet extends Applet implements ExtendedLength {
                 ISOException.throwIt(ISO7816.SW_CONDITIONS_NOT_SATISFIED);
         }
         short requestedSize = apdu.setOutgoing();
+        // ACOSJ 40k returns 0 here. JCOP cards return 256
+        // 
+        // If Le is present and set as Le = 0, this denotes Ne = 256 (according to ISO 7816)
+        // JavaCard spec for setOuggoing says: "Returns: Ne, the expected length of response"
+        // i.e. some cards will return 256 when apdu was sent with Le = 0, some will return 0. 
+        // If 0, then we assume 256 byte 
+        if(requestedSize == (short) 0) {
+        	requestedSize = 256;
+        }
         short outOffset = (short) 0;
         if (scratch[SCRATCH_TRANSPORT_STATE] == TRANSPORT_NOT_EXTENDED) {
             short dataSize = Util.getShort(scratch, SCRATCH_NONCERT_LENGTH);
