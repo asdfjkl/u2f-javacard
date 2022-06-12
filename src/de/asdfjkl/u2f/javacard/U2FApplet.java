@@ -115,16 +115,16 @@ public class U2FApplet extends Applet implements ExtendedLength {
         counter = new byte[4];
         scratchPersistent = JCSystem.makeTransientByteArray((short) 1, JCSystem.CLEAR_ON_RESET);
         scratch = JCSystem.makeTransientByteArray((short) (SCRATCH_PAD + SCRATCH_PAD_SIZE), JCSystem.CLEAR_ON_DESELECT);
+
+        // There seems to be no card that really support TYPE_EC_FP_PRIVATE_TRANSIENT_DESELECT
+        // or TYPE_EC_FP_PRIVATE_TRANSIENT_RESET, even though some cards claim to do so
+        // some cards even do _not_ throw an exception during install, but then only later when the key is used. 
+        // Difficult to debug. Therefore, let's stick with non-transient keys and hope the flash or E^2 wear leveling
+        // is well-designed
         
         localPrivateKey = (ECPrivateKey) KeyBuilder.buildKey(KeyBuilder.TYPE_EC_FP_PRIVATE, KeyBuilder.LENGTH_EC_FP_256, false);
         Secp256r1.setCommonCurveParameters(localPrivateKey);
-        
-        //localPrivateKey = (ECPrivateKey) KeyBuilder.buildKey(KeyBuilder.TYPE_EC_FP_PRIVATE_TRANSIENT_DESELECT, KeyBuilder.LENGTH_EC_FP_256, false);
-        //localPrivateTransient = true;
-        
-        //localPrivateKey = (ECPrivateKey) KeyBuilder.buildKey(KeyBuilder.TYPE_EC_FP_PRIVATE_TRANSIENT_RESET, KeyBuilder.LENGTH_EC_FP_256, false);
-        //localPrivateTransient = true;
-        
+                
         /*
         try {
             // ok, let's save RAM
