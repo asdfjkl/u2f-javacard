@@ -110,12 +110,10 @@ The source code should now be compiled into a `.cap`
 
 Tested successfully on
 
-- G+D Smartcafe 7.0
+- G+D SmartCafeExpert 7.0, JavaCard 3.0.4
 - NXP JCOP 3 J3H145, JavaCard 3.0.4
 - NXP JCOP 2.1, 2.4.2R3, JavaCard 3.0.1
-
-Cards that did not work 
-- ACOSJ 40k (<- gave up debugging for now...)
+- ACOSJ dual interface Java card - 40K, Java Card 3.0.4
 
 I bought my cards from [SmartCardFocus](https://www.smartcardfocus.com).
 
